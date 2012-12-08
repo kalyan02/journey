@@ -4,6 +4,7 @@ from journeyapp.forms import edit
 from django.db import connection
 from journeyapp.models import *
 from datetime import datetime
+
 def newpost(request):
 	post_created = False
 	if request.POST:
@@ -14,11 +15,8 @@ def newpost(request):
 	else:		
 		form = edit.NewPostForm()
 
-
-	# print dir(form.name)
-	# form['title'] = "FOo"
-
 	form.initial['pub_date'] = datetime.now()
+	form.initial['tags'] = ('2')
 
 	return render( request, 'edit/new.html', { 'form' : form, 'post_created':post_created } )
 
@@ -42,22 +40,33 @@ def editpost(request, id):
 
 def viewpost(request):
 	if request.GET and request.GET.has_key('type_id'):
-		allposts = Post.objects.filter(tags__perms__pk=int(request.GET['type_id']))
+		type_id = int( request.GET['type_id'] )
+
+		allposts = Post.objects.filter(tags__perms__pk__in=[ 1, type_id ])
+		view_type = Permissions.objects.filter(pk__in=[1,type_id])
+		view_type = ", ".join([ view.name for view in view_type ])
 	else:
 		allposts = Post.objects.all()
-
-	all_tags = Tag.objects.all()
-	public_tag = all_tags.filter(name='Public')
-	# first_tag = Tag.objects.get(pk=1)
-	# thef_tag = Tag.objects.get(pk=1)
-
-	# queries = ""
-	# for each in connection.queries:
-	# 	queries += str(each)
+		view_type = None
+		view_type = Permissions.objects.filter(pk=1)
 
 	params = {
-		'alist' : public_tag,
+		'view_type' : view_type,
 		'queries' : connection.queries,
 		'allposts' : allposts
 	}
 	return render( request, 'edit/view.html', params )
+
+
+
+
+
+
+
+
+
+
+
+
+
+

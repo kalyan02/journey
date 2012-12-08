@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load url from future %}
 {% block content %}
-View posts 
+View posts ({{ view_type }})
 
 {% for post in allposts %}
 	<p>
@@ -23,7 +23,6 @@ View posts
 {% endfor %}
 
 <br />
-{{ alist }}
 
 <hr />
 <pre>{% for each in queries %}{{ each }}
