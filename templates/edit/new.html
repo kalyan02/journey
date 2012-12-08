@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	{% if form.errors %}
+		<p>Some errors occured.</p>
+		<p>{{ errors }}</p>
+	{% endif %}
+
+	{% if post_created %}
+		<p>Post has been crated</p>
+	{% else %}
+		{% if not no_form %}
+			<form action="?" method="POST">
+				<table>
+				{{ form }}
+				</table>
+				<input type="submit" value="Save" />
+				{% csrf_token %}
+			</form>
+		{% else %}
+			{{ form }}
+		{% endif %}
+	{% endif %}
+
+{% endblock %}

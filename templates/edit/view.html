@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block content %}
+View posts 
+
+{% for post in allposts %}
+	<p>
+		<span class='postdate'>
+			{{ post.pub_date }}
+		</span>
+
+		{{ post.title }} : {{ post.content }} 
+		<i>(
+			{% for tag in post.tags.all %}
+				<a href='?type_id={{ tag.id }}'>{{ tag.name }}</a>
+			{% empty %}
+			{% endfor %}
+			)
+		</i>
+
+		(<a href='{% url 'edit_post' post.id %}'>edit</a>)
+	</p>
+{% endfor %}
+
+<br />
+{{ alist }}
+
+<hr />
+<pre>{% for each in queries %}{{ each }}
+{% endfor %}
+</pre>
+
+{% endblock %}

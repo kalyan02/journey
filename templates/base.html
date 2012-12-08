@@ -1,0 +1,33 @@
+{% load url from future %}
+<html>
+<head>
+	<title>Journey - micro journal</title>
+	<style type="text/css">
+		body { font:14px "Helvetica Neue", Arial, Verdana; }
+		#container { margin: 20px; }
+		#header h2 span { font-weight: normal; margin-left: 20px; }
+		#header h2 a { border:1px solid #B55242; padding: 4px; text-decoration: none; font-size: 14px; }
+		#header h2 a:hover { color: #fff; background: #B55242}
+
+		.postdate { font-size: 12px; font-style: italic; margin-right: 30px;}
+		a { color : #B55242; }
+	</style>
+</head>
+<body>
+	<div id="container">
+	<div id="header">
+		<h2>Journey - Micro journal
+			<span>
+				<a href='{% url 'new_post' %}'>new post</a>
+				<a href='{% url 'all_posts' %}'>view all</a>
+
+			</span>
+		</h2>
+	</div>
+	<div id="body">
+		{% block content %}
+		{% endblock %}
+	</div>
+	</div>
+</body>
+</html>

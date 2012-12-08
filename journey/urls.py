@@ -6,7 +6,10 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'journey.views.home', name='home'),
+    url(r'^$', 'journeyapp.views.home.default', name='home'),
+    url(r'^new/$', 'journeyapp.views.edit.newpost', name='new_post'),
+    url(r'^edit/([\d]+)$', 'journeyapp.views.edit.editpost', name='edit_post'),
+    url(r'^view/$', 'journeyapp.views.edit.viewpost', name='all_posts')
     # url(r'^journey/', include('journey.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
