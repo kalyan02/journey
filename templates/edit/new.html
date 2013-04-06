@@ -4,7 +4,7 @@
 
 	{% if form.errors %}
 		<p>Some errors occured.</p>
-		<p>{{ errors }}</p>
+		<p>{{ form.errors }}</p>
 	{% endif %}
 
 	{% if post_created %}
@@ -13,7 +13,18 @@
 		{% if not no_form %}
 			<form action="?" method="POST">
 				<table>
-				{{ form }}
+					<tr>
+						<td>Date</td><td>{{form.pub_date}}</td>
+					</tr
+					<tr>
+						<td>Title</td><td>{{form.title}}</td>
+					</tr>
+					<tr>
+						<td valign="top">Content</td><td>{{form.content}}</td>
+					</tr>
+					<tr>
+						<td>Tags</td><td>{{ form.tags }}</td>
+					</tr>
 				</table>
 				<input type="submit" value="Save" />
 				{% csrf_token %}
@@ -23,4 +34,62 @@
 		{% endif %}
 	{% endif %}
 
+
+
+<script type="text/javascript">
+var tag_data = {{all_tags}};
+var tag_map = {};
+$(document).ready(function(){
+	//$("#id_tags option").attr("selected",false);
+	for( i=0; i<tag_data.length; i++ ) {
+		tag_map[ tag_data[i].id ] = tag_data[i].text
+	}
+	id_tags = $("#id_tags");
+	itags = JSON.parse(id_tags.val());
+	for( i=0; i<itags.length; i++ ) {
+
+	}
+	itags_map = itags.map(function(v){
+					return { id:v, text:tag_map[v] } || undefined;
+				}).filter(function(v){
+					if(v) return true;
+				});
+
+	$("#id_tags")
+	.attr('value'," ")
+	.select2({
+		initSelection : function(ele,callback) {
+			callback(itags_map);
+		},
+		data : tag_data,
+		multiple: true,
+		createSearchChoice : function(term) {
+			term = term.replace(/,/,'')
+			return { id:term, text: term };
+		}
+	});
+});
+</script>
+<hr />
+<pre>{% for each in queries %}{{ each }}
+{% endfor %}
+</pre>
+
+
+{% endblock %}
+
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}select2/select2.css" />
+<style type="text/css">
+#id_tags {
+	width : 100px;
+}
+
+.select2-container {
+	width:100%;
+}
+</style>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}select2/select2.js"></script>
 {% endblock %}

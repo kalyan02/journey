@@ -4,6 +4,8 @@ from journeyapp.forms import edit
 from django.db import connection
 from journeyapp.models import *
 from datetime import datetime
+import json
+from django.utils.safestring import mark_safe
 
 def newpost(request):
 	post_created = False
@@ -16,9 +18,14 @@ def newpost(request):
 		form = edit.NewPostForm()
 
 	form.initial['pub_date'] = datetime.now()
-	form.initial['tags'] = ('2')
+	# form.initial['tags'] = ('2')
 
-	return render( request, 'edit/new.html', { 'form' : form, 'post_created':post_created } )
+	return render( request, 'edit/new.html', { 
+		'form' : form, 
+		'post_created':post_created, 
+		'tags' : dir(form),
+		'queries' : connection.queries
+	})
 
 def editpost(request, id):
 	no_form = False
@@ -28,15 +35,23 @@ def editpost(request, id):
 			form = edit.NewPostForm(data=request.POST, instance=post)
 			if form.is_valid():
 				post = form.save()
+				form = edit.NewPostForm(instance=post)
 		else:
 			form = edit.NewPostForm(instance=post)
 
-	except:
-		form = "Requested item does not exist!!"
+	except Exception, e:
+		form = "Requested item does not exist!! or " + e.message
 		no_form = True
 
 
-	return render( request, 'edit/new.html', { 'form' : form, 'post_created':False, 'no_form':no_form } )
+	all_tags = [ { 'id' : tag.pk, 'text' : tag.name } for tag in Tag.objects.all() ]
+	print all_tags
+	return render( request, 'edit/new.html', {
+		'form' : form,
+		'post_created':False,
+		'no_form':no_form,
+		'all_tags' : mark_safe(json.dumps(all_tags))
+		})
 
 def viewpost(request):
 	if request.GET and request.GET.has_key('type_id'):
