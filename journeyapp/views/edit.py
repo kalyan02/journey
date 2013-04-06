@@ -18,12 +18,15 @@ def newpost(request):
 		form = edit.NewPostForm()
 
 	form.initial['pub_date'] = datetime.now()
-	# form.initial['tags'] = ('2')
+	# form.initial['tags'] = ('2',)
 
+	all_tags = [ { 'id' : tag.pk, 'text' : tag.name } for tag in Tag.objects.all() ]
+	print "ALL TAGS", all_tags
 	return render( request, 'edit/new.html', { 
 		'form' : form, 
 		'post_created':post_created, 
 		'tags' : dir(form),
+		'all_tags' : mark_safe(json.dumps(all_tags)),
 		'queries' : connection.queries
 	})
 
@@ -50,7 +53,8 @@ def editpost(request, id):
 		'form' : form,
 		'post_created':False,
 		'no_form':no_form,
-		'all_tags' : mark_safe(json.dumps(all_tags))
+		'all_tags' : mark_safe(json.dumps(all_tags)),
+		'queries' : connection.queries
 		})
 
 def viewpost(request):

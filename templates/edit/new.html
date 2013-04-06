@@ -45,7 +45,7 @@ $(document).ready(function(){
 		tag_map[ tag_data[i].id ] = tag_data[i].text
 	}
 	id_tags = $("#id_tags");
-	itags = JSON.parse(id_tags.val());
+	itags = JSON.parse( id_tags.val() || '[1]' );
 	for( i=0; i<itags.length; i++ ) {
 
 	}
