@@ -60,14 +60,32 @@ def editpost(request, id):
 def viewpost(request):
 	if request.GET and request.GET.has_key('type_id'):
 		type_id = int( request.GET['type_id'] )
-
-		allposts = Post.objects.filter(tags__perms__pk__in=[ 1, type_id ])
-		view_type = Permissions.objects.filter(pk__in=[1,type_id])
-		view_type = ", ".join([ view.name for view in view_type ])
+		post_objs = Post.objects.filter(tags__perms__pk__in=[ type_id ])
+		view_type = Permissions.objects.filter(pk__in=[type_id])
 	else:
-		allposts = Post.objects.all()
-		view_type = None
-		view_type = Permissions.objects.filter(pk=1)
+		post_objs = Post.objects.all()
+		view_type = Permissions.objects.all()
+
+	view_type = ", ".join([ view.name for view in view_type ])
+	allposts = []
+	tagPermCache = {}
+	for eachPost in post_objs:
+		allperms = set()
+		alltags = eachPost.tags.all()
+		for eachTag in alltags:
+			if not tagPermCache.has_key( eachTag.id ):
+				tagPermCache[ eachTag.id ] = eachTag.perms.all()
+
+			allperms.update( tagPermCache.get( eachTag.id, [] ) )
+
+		print allperms
+		allposts.append({
+				'post' : eachPost,
+				'tags' : alltags,
+				'perms' : allperms
+			})
+		# allposts = post_objs
+		#view_type = Permissions.objects.filter(pk=1)
 
 	params = {
 		'view_type' : view_type,
@@ -76,12 +94,43 @@ def viewpost(request):
 	}
 	return render( request, 'edit/view.html', params )
 
+def edit_tags(request):
+	all_tags_forms = []
+	
+
+	allOK = True
+	for eachTag in Tag.objects.all():
+		kwargs = {
+			'instance' : eachTag, 
+			'prefix' : 'tag_'+str(eachTag.id)
+		}
+		if request.POST:
+			kwargs.update( {'data':request.POST } )
+
+		tagFormlet = edit.EditTagFormlet( **kwargs )
+
+		if request.POST:
+			allOK = allOK and tagFormlet.is_valid()
+			if not allOK:
+				print 'SHIT', eachTag
+
+		all_tags_forms.append( tagFormlet )
+
+	if request.POST:
+		if allOK:
+			print 'ALL is well'
+			for eachTagForm in all_tags_forms:
+				eachTagForm.save()
+		else:
+			print 'ALL IS NOT OK'
 
 
 
-
-
-
+	params = {
+		'all_tags' : all_tags_forms,
+		'queries' : connection.queries
+	}
+	return render( request, 'edit/tags.html', params )
 
 
 

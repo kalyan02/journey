@@ -3,22 +3,23 @@
 {% block content %}
 View posts ({{ view_type }})
 
-{% for post in allposts %}
+{% for obj in allposts %}
 	<p>
 		<span class='postdate'>
-			{{ post.pub_date }}
+			{{ obj.post.pub_date }}
 		</span>
 
-		{{ post.title }} : {{ post.content }} 
+		{{ obj.post.title }} : {{ obj.post.content }} 
 		<i>(
-			{% for tag in post.tags.all %}
-				<a href='?type_id={{ tag.id }}'>{{ tag.name }}</a>
+			{% for perm in obj.perms %}
+				<a href='?type_id={{ perm.id }}'>{{ perm.name }}</a>
 			{% empty %}
 			{% endfor %}
 			)
 		</i>
 
-		(<a href='{% url 'edit_post' post.id %}'>edit</a>)
+		{{ obj.post.id }}
+		(<a href='{% url 'edit_post' obj.post.id %}'>edit</a>)
 	</p>
 {% endfor %}
 

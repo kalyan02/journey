@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% block content %}
+
+<h3>Edit Tags</h3>
+	<form action="?" method="POST">
+		<table>
+			{% for each in all_tags %}
+				{% if each.errors %}
+					<tr>
+						<td colspan='2'>
+							{{ each.errors }}
+						</td>
+					</tr>
+				{% endif %}
+			<tr>
+				<td>{{ each.name }}</td>
+				<td>{{ each.perms }}</td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<td><input type="submit" value="Save" /></td>
+			</tr>
+			{% csrf_token %}
+		</table>
+	</form>
+
+<hr />
+<pre>{% for each in queries %}{{ each }}
+{% endfor %}
+</pre>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("select").select2();
+});
+</script>
+
+{% endblock %}
+
+
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}select2/select2.css" />
+<style type="text/css">
+#id_tags {
+	width : 100px;
+}
+
+.select2-container {
+	width:100%;
+}
+</style>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}select2/select2.js"></script>
+{% endblock %}

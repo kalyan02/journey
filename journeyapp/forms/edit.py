@@ -13,9 +13,6 @@ class TagsInput(forms.TextInput):
 	# on submit
 	# def value_from_datadict(self,*args,**kwargs):
 	def value_from_datadict(self,data,files,name):
-		print "DATADICT", files, name
-		print 'duh'
-		print data['tags']
 		tags_str = data['tags']
 		tags_list = tags_str.split(',')
 		tags_all = []
@@ -26,26 +23,29 @@ class TagsInput(forms.TextInput):
 			except:
 				if len(each) > 1:
 					new_tag = Tag.objects.create(name=each)
-					print 'sasdfasdfadf', new_tag, type(new_tag), each
 					tags_all.append( new_tag.pk )
 
 		return tags_all
-
 	# def value_from_datadict(self,data,files,name):
 	# 	return [1,2]
 
 	pass
 
 class NewPostForm(forms.ModelForm):
-	# title = models.CharField(max_length=200,null=True)
-	# content = models.TextField(default=None,null=True)
-	# tags = forms.CharField()
-	# pub_date = models.DateField(null=True)
 	class Meta:
 		model = Post
 		# exclude = ('tags',)
 		widgets = {
 			#'tags' : forms.TextField()
 			'tags': TagsInput #Textarea(attrs={'cols': 80, 'rows': 20})
+		}
+
+
+
+class EditTagFormlet(forms.ModelForm):
+	class Meta:
+		model = Tag
+		widgets = {
+			'name' : forms.TextInput(attrs={'class':'textEdit'} ),
 		}
 

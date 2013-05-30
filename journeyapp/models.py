@@ -26,6 +26,10 @@ class Post(models.Model):
 	def __unicode__(self):
 		return self.title
 
+# class Setting(models.Model):
+# 	name = models.CharField(max_length=200)
+# 	value = models.TextField(default=None,null=True)
+
 # class User(models.Model):
 # 	username = models.CharField(max_length=200)
 # 	password = models.PasswordField
